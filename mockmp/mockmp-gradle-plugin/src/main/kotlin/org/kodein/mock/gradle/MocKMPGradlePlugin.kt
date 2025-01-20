@@ -4,13 +4,13 @@ import com.android.build.api.dsl.TestedExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import com.google.devtools.ksp.gradle.KspExtension
+import java.util.Locale
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
-import org.gradle.internal.extensions.stdlib.capitalized
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.register
@@ -233,9 +233,18 @@ public class MocKMPGradlePlugin : Plugin<Project> {
             }
 
             kotlinTargets.forEach { target ->
-                project.dependencies.add("ksp${target.name.capitalized()}${suffix}", "org.kodein.mock:mockmp-processor:${BuildConfig.VERSION}")
+                project.dependencies.add(
+                    "ksp${target.name.capitalized()}${suffix}",
+                    "org.kodein.mock:mockmp-processor:${BuildConfig.VERSION}",
+                )
             }
         }
     }
+}
 
+private fun String.capitalized(locale: Locale = Locale.getDefault()) = replaceFirstChar {
+    when {
+        it.isLowerCase() -> it.titlecase(locale)
+        else -> it.toString()
+    }
 }
